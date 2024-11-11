@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Ordering App</title>
+    <script src="../visio-jsx.js" defer></script>
+    <script src="../visio.js" defer></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="../visio-init.js"></script>
+    <script type="text/babel">
+    /* @jsx h */
+
+    Visio.setStyles({
+        'body': {
+            fontFamily: 'Arial, sans-serif',
+            backgroundColor: '#f8f9fa',
+            margin: '0',
+            padding: '0',
+        },
+        '#app': {
+            maxWidth: '800px',
+            margin: '40px auto',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        },
+        'header': {
+            backgroundColor: '#343a40',
+            color: '#ffffff',
+            padding: '20px',
+            textAlign: 'center',
+            borderRadius: '10px 10px 0 0',
+        },
+        'h1': {
+            margin: '0',
+        },
+        'nav': {
+            margin: '20px 0',
+            textAlign: 'center',
+        },
+        'nav a': {
+            margin: '0 15px',
+            textDecoration: 'none',
+            color: '#343a40',
+            fontWeight: 'bold',
+        },
+        'nav a:hover': {
+            textDecoration: 'underline',
+        },
+        '.menu-item': {
+            border: '1px solid #ddd',
+            borderRadius: '5px',
+            margin: '10px 0',
+            padding: '10px',
+            backgroundColor: '#fff',
+        },
+        '.menu-item h2': {
+            margin: '0',
+            fontSize: '20px',
+        },
+        '.menu-item p': {
+            margin: '5px 0',
+            fontSize: '16px',
+            color: '#666',
+        },
+        '.order-btn': {
+            backgroundColor: '#28a745',
+            color: '#fff',
+            padding: '10px 15px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s',
+        },
+        '.order-btn:hover': {
+            backgroundColor: '#218838',
+        },
+        '#order-summary': {
+            borderTop: '1px solid #ddd',
+            padding: '20px 0',
+            marginTop: '20px',
+        },
+        '.remove-btn': {
+            backgroundColor: '#dc3545',
+            color: '#fff',
+            padding: '5px 10px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginLeft: '10px',
+        },
+        '.clear-btn': {
+            backgroundColor: '#ffc107',
+            color: '#000',
+            padding: '10px 15px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginTop: '20px',
+        },
+    });
+
+    // Define components
+    Visio.defineComponent('Home', {
+        render: () => {
+            return (
+                <div>
+                    <header>
+                        <h1>Food Ordering App</h1>
+                    </header>
+                    <nav>
+                        <a href="#Home" style="text-decoration: underline">Home</a>
+                        <a href="#Menu">Menu</a>
+                        <a href="#OrderSummary">Your Orders</a>
+                    </nav>
+                    <h2>Welcome to our Food Ordering App!</h2>
+                    <p>Order your favorite meals with just a few clicks.</p>
+                </div>
+            );
+        },
+        swipeConfig: {
+            left: '#Menu',
+            right: null
+        }
+    });
+
+    const sampleMenu = [
+        { id: 1, name: 'Burger', description: 'Juicy beef burger with cheese.', price: 8.99 },
+        { id: 2, name: 'Pizza', description: 'Delicious cheese pizza with pepperoni.', price: 12.99 },
+        { id: 3, name: 'Pasta', description: 'Creamy Alfredo pasta with chicken.', price: 10.99 },
+        { id: 4, name: 'Salad', description: 'Fresh garden salad with vinaigrette.', price: 6.99 },
+    ];
+
+    Visio.defineComponent('Menu', {
+        render: () => {
+            return (
+                <div>
+                    <header>
+                        <h1>Menu</h1>
+                    </header>
+                    <nav>
+                        <a href="#Home">Home</a>
+                        <a href="#Menu" style="text-decoration: underline">Menu</a>
+                        <a href="#OrderSummary">Your Orders</a>
+                    </nav>
+                    {sampleMenu.map(item => (
+                        <div class="menu-item" key={item.id}>
+                            <h2>{item.name}</h2>
+                            <p>{item.description}</p>
+                            <p>Price: ${item.price.toFixed(2)}</p>
+                            <button class="order-btn" onClick={() => addToOrder(item)}>Order Now</button>
+                        </div>
+                    ))}
+                </div>
+            );
+        },
+        swipeConfig: {
+            right: '#Home',  // Specify where to swipe left
+            left: '#OrderSummary'  // Specify where to swipe right
+        }
+    });
+
+    // Retrieve stored order from LocalStorage or initialize an empty array
+    let order = LocalStorageManager.getItem('order') || [];
+
+function addToOrder(item) {
+    // Check if the item is already in the order
+    const itemExists = order.some(orderItem => orderItem.id === item.id);
+
+    if (itemExists) {
+        alert(`${item.name} is already in your order!`);
+    } else {
+        order.push(item); // Add item to the order
+        LocalStorageManager.setItem('order', order); // Save updated order to LocalStorage
+        alert(`${item.name} has been added to your order!`);
+    }
+}
+
+    function clearOrder() {
+        order = [];
+        LocalStorageManager.removeItem('order'); // Clear order in LocalStorage
+        alert("Your entire order has been cleared.");
+        Visio.renderComponent('OrderSummary', '#app'); // Re-render the OrderSummary component
+    }
+
+    function removeItem(index) {
+        order.splice(index, 1); // Remove the item from the array
+        LocalStorageManager.setItem('order', order); // Update LocalStorage
+        Visio.renderComponent('OrderSummary', '#app'); // Re-render the OrderSummary component
+    }
+
+    Visio.defineComponent('OrderSummary', {
+        render: () => {
+            return (
+                <div>
+                    <header>
+                        <h1>Your Orders</h1>
+                    </header>
+                    <nav>
+                        <a href="#Home">Home</a>
+                        <a href="#Menu">Menu</a>
+                        <a href="#OrderSummary" style="text-decoration: underline">Your Orders</a>
+                    </nav>
+                    {order.length === 0 ? (
+                        <p>No items in your order.</p>
+                    ) : (
+                        <div id="order-summary">
+                            {order.map((item, index) => (
+                                <div key={index}>
+                                    <h3>{item.name}</h3>
+                                    <p>Price: ${item.price.toFixed(2)}</p>
+                                    <button class="remove-btn" onClick={() => removeItem(index)}>Remove</button>
+                                </div>
+                            ))}
+                            <h3>Total: ${order.reduce((total, item) => total + item.price, 0).toFixed(2)}</h3>
+                            <button class="clear-btn" onClick={clearOrder}>Clear Entire Order</button>
+                        </div>
+                    )}
+                </div>
+            );
+        },
+        swipeConfig: {
+            right: '#Menu',  // Specify where to swipe left
+            left: null,
+        }
+    });
+
+    // Function to render the appropriate component based on the current hash
+    function renderComponentBasedOnHash() {
+        const currentHash = window.location.hash.slice(1) || 'Home';
+        Visio.renderComponent(currentHash, '#app');
+    }
+
+    // Initialize framework
+    Visio.init("#app");
+
+    // Set title and homepage
+    Visio.setTitle('Food Ordering App');
+    Visio.setHomePage('Home');
+    Visio.setMode('mobile');
+
+    // Initial rendering
+    renderComponentBasedOnHash();
+
+    // Event listener for hash change
+    window.addEventListener('hashchange', renderComponentBasedOnHash);
+
+    console.log('Food Ordering App Loaded');
+    </script>
+</body>
+</html>

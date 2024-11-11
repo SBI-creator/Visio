@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <!-- Visio Framework -->
+    <script src="visio.js"></script>
+    <script src="visio-init.js"></script>
+    <script src="visio-jsx.js"></script>
+    <script type="text/babel">
+        /* @jsx h */
+        // Initialize the Visio framework
+        const app = Visio;
+        const req = new Request();
+
+        // Define the Home component
+        class Home {
+            render() {
+                return (
+                    <div>
+                        <h1>Welcome {req.query.name}</h1>
+                        <p>You Searced for: {req.query.q}</p>
+                    </div>
+                );
+            }
+        }
+
+        // Define the component in Visio
+        app.defineComponent('Home', new Home()); // Associate 'Home' with the Home class
+
+        // Set the homepage to 'Home'
+        app.setHomePage('Home');
+
+        // Render the Home component inside the 'app' div
+        app.merge('Home', document.getElementById("app")); // Merge 'Home' inside the 'app' div
+    </script>
+</body>
+
+</html>

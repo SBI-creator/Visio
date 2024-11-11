@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visio App</title>
+    <script src="../visio-jsx.js"></script>
+</head>
+<body id="app">
+    <header id="header"></header>
+    <footer id="footer"></footer>
+    <script src="../visio.js"></script>
+    <script src="../visio-init.js"></script>
+    <script type="text/babel">
+  /** @jsx h */
+        Visio.setStyles({
+            'body': {
+                fontFamily: 'Segoe ui',
+            }
+        })
+        // Define components
+        Visio.defineComponent('Home', {
+            render: () => {
+                Visio.setTitle("Home");
+                return (
+                    <div>
+                        <h1>Welcome to Visio App</h1>
+                        <p>This is the homepage.</p>
+                        <button onClick={() => navigate('#About')}>Go to About</button>
+                    </div>
+                );
+                
+            },
+            swipeConfig: {
+                right: null,  // Specify where to swipe left
+                left: '#About',
+            }
+        });
+
+        Visio.defineComponent('About', {
+            render: () => {
+                Visio.setTitle("About");
+                return (
+                    <div>
+                        <h1>About Us</h1>
+                        <p>This is the about page.</p>
+                        <button onClick={() => navigate('#Contact')}>Go to Contact</button>
+                    </div>
+                );
+            },
+            swipeConfig: {
+                right: "#Home",  // Specify where to swipe left
+                left: '#Contact',
+            }
+        });
+
+        Visio.defineComponent('Contact', {
+            render: () => {
+                Visio.setTitle("Contact");
+                return (
+                    <div>
+                        <h1>Contact Us</h1>
+                        <p>This is the contact page.</p>
+                        <button onClick={() => navigate('#Home')}>Go to Home</button>
+                    </div>
+                );
+            },
+            swipeConfig: {
+                right: '#About',  // Specify where to swipe left
+                left: null,
+            }
+        });
+
+        // Initialize the framework
+        Visio.init("#app");
+        // Set mode to mobile
+        Visio.setMode('mobile');
+    </script>
+</body>
+</html>
